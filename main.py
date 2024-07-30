@@ -1,9 +1,6 @@
 import asyncio
-import logging
-import sys
-import random
 import json
-import datetime
+import random
 
 from aiogram import Bot, Dispatcher, types
 import aiocron
@@ -17,25 +14,6 @@ MEMBER_FILE = "reminders.json"
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
 bot = Bot(TOKEN)
-
-
-#@aiocron.crontab('0 6,9,12,15,18,21,23 * * * 0')
-@aiocron.crontab('* * * * * 30')
-async def sendReminders():
-    '''
-    '''
-    print("sending reminders")
-    with open(MEMBER_FILE, 'r', encoding='utf-8') as member_data_file:
-        member_dict = json.load(member_data_file)
-
-        with open(DATA_FILE, 'r', encoding='utf-8') as quote_data_file:
-            data_dict = json.load(quote_data_file)
-            msg_greeting, msg_body, msg_ending = random.choice(data_dict['greeting']), random.choice(data_dict['body'], random.choice(data_dict['ending']))
-            for member in member_dict['members']:
-                try:
-                    await bot.send_message(member, f"{msg_greeting}\n\n{msg_body}\n\n{msg_ending}")
-                except Exception as e:
-                    pass # some fool probably blocked the bot, I cba to deal with that
 
 
 async def add_bounty_statement(statement_category:str, statement_content:str, data_file_path:str) -> bool:
@@ -132,9 +110,26 @@ async def message_handler(message: types.Message) -> None:
 
 
 async def main() -> None:
+
+    @aiocron.crontab('0 6,9,12,15,18,21,23 * * * 0')
+    async def sendReminders():
+        '''
+        '''
+        print("sending reminders x1")
+        with open(MEMBER_FILE, 'r', encoding='utf-8') as member_data_file:
+            member_dict = json.load(member_data_file)
+
+            with open(DATA_FILE, 'r', encoding='utf-8') as quote_data_file:
+                data_dict = json.load(quote_data_file)
+                msg_greeting, msg_body, msg_ending = random.choice(data_dict['greeting']), random.choice(data_dict['body']), random.choice(data_dict['ending'])
+                for member in member_dict['members']:
+                    try:
+                        await bot.send_message(member, f"{msg_greeting}\n\n{msg_body}\n\n{msg_ending}")
+                    except Exception as e:
+                        pass # some fool probably blocked the bot, I cba to deal with that
+
     await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
