@@ -60,6 +60,11 @@ async def clean_bot_mention(content, bot_username) -> str:
     return content.replace("@" + bot_username, "")
 
 
+async def verify_admins(id) -> bool:
+    if id in (5420030509, 66792890699, 2749995639, 2817880469):
+        return True
+
+
 @dp.message()
 async def message_handler(message: types.Message) -> None:
     """
@@ -77,28 +82,31 @@ async def message_handler(message: types.Message) -> None:
 
     # handle additions of greeting, body or ending
     elif message.text.startswith('/add_greeting '):
-        content = message.text.replace("/add_greeting ", "")
-        content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
-        if await add_bounty_statement(statement_category='greeting', statement_content=content, data_file_path=DATA_FILE):
-            await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: greeting')
-        else:
-            await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
+        if verify_admins(message.from_user.id):
+            content = message.text.replace("/add_greeting ", "")
+            content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
+            if await add_bounty_statement(statement_category='greeting', statement_content=content, data_file_path=DATA_FILE):
+                await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: greeting')
+            else:
+                await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
 
     elif message.text.startswith('/add_body '):
-        content = message.text.replace("/add_body ", "")
-        content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
-        if await add_bounty_statement(statement_category='body', statement_content=content, data_file_path=DATA_FILE):
-            await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: body')
-        else:
-            await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
+        if verify_admins(message.from_user.id):
+            content = message.text.replace("/add_body ", "")
+            content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
+            if await add_bounty_statement(statement_category='body', statement_content=content, data_file_path=DATA_FILE):
+                await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: body')
+            else:
+                await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
 
     elif message.text.startswith('/add_ending '):
-        content = message.text.replace("/add_ending ", "")
-        content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
-        if await add_bounty_statement(statement_category='ending', statement_content=content, data_file_path=DATA_FILE):
-            await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: ending')
-        else:
-            await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
+        if verify_admins(message.from_user.id):
+            content = message.text.replace("/add_ending ", "")
+            content = await clean_bot_mention(content=content, bot_username=credentials.bot_username)
+            if await add_bounty_statement(statement_category='ending', statement_content=content, data_file_path=DATA_FILE):
+                await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: ending')
+            else:
+                await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
 
     # handle signing up and signing out of bounty reminders
     elif message.text.startswith('/sub'):
@@ -111,7 +119,7 @@ async def message_handler(message: types.Message) -> None:
 
 async def main() -> None:
 
-    @aiocron.crontab('0 6,9,12,15,18,21,23 * * * 0')
+    @aiocron.crontab('0 5,16,19 * * * 0')
     async def sendReminders():
         '''
         '''
