@@ -75,9 +75,9 @@ async def message_handler(message: types.Message) -> None:
         help_message = "bounty Bot help:\n"
         help_message += "\n/sub - adds you to the list of reminders"
         help_message += "\n/unsub removes you from the list of reminders"
-        help_message += "\n/add_greeting GREETINGTEXT"
-        help_message += "\n/add_body BODYTEXT"
-        help_message += "\n/add_ending ENDINGTEXT"
+        # help_message += "\n/add_greeting GREETINGTEXT"
+        # help_message += "\n/add_body BODYTEXT"
+        # help_message += "\n/add_ending ENDINGTEXT"
         await bot.send_message(message.chat.id, help_message)
 
     # handle additions of greeting, body or ending
