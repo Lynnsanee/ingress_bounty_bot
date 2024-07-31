@@ -61,7 +61,7 @@ async def clean_bot_mention(content, bot_username) -> str:
 
 
 async def verify_admins(id) -> bool:
-    if id in (5420030509, 66792890699, 2749995639, 2817880469):
+    if id in (542003050, 6679289069, 274999563, 281788046):
         return True
 
 
