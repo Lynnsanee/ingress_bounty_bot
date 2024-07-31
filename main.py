@@ -70,7 +70,7 @@ async def message_handler(message: types.Message) -> None:
     """
     """
     if message.text.startswith('/start'):
-        await bot.send_message(message.chat.id, 'welkom bij de reminder bot')
+        await bot.send_message(message.chat.id, 'welkom bij de reminder bot, probeer /help')
     elif message.text.startswith('/help'):
         help_message = "bounty Bot help:\n"
         help_message += "\n/sub - adds you to the list of reminders"
