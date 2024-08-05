@@ -16,6 +16,24 @@ dp = Dispatcher()
 bot = Bot(TOKEN)
 
 
+async def sendReminders():
+    '''
+    '''
+    print("sending reminders xy1")
+    with open(MEMBER_FILE, 'r', encoding='utf-8') as member_data_file:
+        member_dict = json.load(member_data_file)
+
+        with open(DATA_FILE, 'r', encoding='utf-8') as quote_data_file:
+            data_dict = json.load(quote_data_file)
+            msg_greeting, msg_body, msg_ending = random.choice(data_dict['greeting']), random.choice(data_dict['body']), random.choice(data_dict['ending'])
+            for member in member_dict['members']:
+                try:
+                    await bot.send_message(member, f"{msg_greeting}\n\n{msg_body}\n\n{msg_ending}")
+                except Exception as e:
+                    print(e)
+                    pass # some fool probably blocked the bot, I cba to deal with that
+
+
 async def add_bounty_statement(statement_category:str, statement_content:str, data_file_path:str) -> bool:
     '''
     Add statement to provided data file in the requested category
@@ -74,7 +92,7 @@ async def message_handler(message: types.Message) -> None:
     elif message.text.startswith('/help'):
         help_message = "bounty Bot help:\n"
         help_message += "\n/sub - adds you to the list of reminders"
-        help_message += "\n/unsub removes you from the list of reminders"
+        # help_message += "\n/unsub removes you from the list of reminders"
         # help_message += "\n/add_greeting GREETINGTEXT"
         # help_message += "\n/add_body BODYTEXT"
         # help_message += "\n/add_ending ENDINGTEXT"
@@ -107,14 +125,19 @@ async def message_handler(message: types.Message) -> None:
                 await bot.send_message(message.chat.id, f'added:\n"{content}"\nAs: ending')
             else:
                 await bot.send_message(message.chat.id, 'ERROR IDK WERKTE NIET')
+    
+    elif message.text.startswith('/test'):
+        print("messages!")
+        await sendReminders()
 
     # handle signing up and signing out of bounty reminders
     elif message.text.startswith('/sub'):
         await update_subscriber_list(user_id=message.from_user.id, member_file_path=MEMBER_FILE, add=True)
         await bot.send_message(message.chat.id, 'ADDED to the list')
     elif message.text.startswith('/unsub'):
-        await update_subscriber_list(user_id=message.from_user.id, member_file_path=MEMBER_FILE, add=False)
-        await bot.send_message(message.chat.id, 'REMOVED from the list')
+        pass
+        #await update_subscriber_list(user_id=message.from_user.id, member_file_path=MEMBER_FILE, add=False)
+        #await bot.send_message(message.chat.id, 'REMOVED from the list')
 
 
 async def main() -> None:
@@ -134,6 +157,7 @@ async def main() -> None:
                     try:
                         await bot.send_message(member, f"{msg_greeting}\n\n{msg_body}\n\n{msg_ending}")
                     except Exception as e:
+                        print(e)
                         pass # some fool probably blocked the bot, I cba to deal with that
 
     await dp.start_polling(bot)
